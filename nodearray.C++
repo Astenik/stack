@@ -24,7 +24,6 @@ class NodeArray: public Stack<T>
      NodeArray<T>& operator=(const NodeArray&);
      NodeArray<T> operator+(const NodeArray)const;
      static int get_c();
-     std::ostream&  operator<<(std::ostream&);
   private:
      Listnode<T>* m_top;
 };
