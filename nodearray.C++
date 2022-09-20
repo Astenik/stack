@@ -111,7 +111,7 @@ template <typename T>
 void NodeArray<T>:: pop()
 {
     assert(!is_empty());
-    NodeArray<T>* ptr = m_top;
+    Listnode<T>* ptr = m_top;
     m_top = m_top->m_next;
     delete ptr;
     ptr = nullptr;
@@ -121,10 +121,7 @@ template <typename T>
 
 T NodeArray<T>:: top()const
 {
-    if(!is_empty())
-    {
-        return m_top->m_value;
-    }
+      return m_top->m_value;
 }
 
 template <typename T>
@@ -153,7 +150,7 @@ NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
         return *this;
     }
     Listnode<T>* cpy = other.m_top;
-    NodeArray<T> obj();
+    NodeArray<T> obj;
     while(cpy->m_next != nullptr)
     {
         obj.push(cpy->m_value);
@@ -161,7 +158,7 @@ NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
     }
     obj.push(cpy->m_value);
     
-    NodeArray<T> obj2();
+    NodeArray<T> obj2;
     cpy = obj.m_top;
     
     while(cpy->m_next != nullptr)
@@ -172,8 +169,7 @@ NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
     obj2.push(cpy->m_value);
     obj.clear();
     this->clear();
-    NodeArray<T>* ptr = &obj2;
-    this = ptr;
+    *this = obj2;
     return *this;
 }
 
@@ -181,7 +177,7 @@ template <typename T>
 
 NodeArray<T> NodeArray<T>:: operator+(const NodeArray<T>& obj)const
 {
-    NodeArray<T> sum_obj();
+    NodeArray<T> sum_obj;
     Listnode<T>* ptr = m_top;
     while(ptr->m_next != nullptr)
     {
