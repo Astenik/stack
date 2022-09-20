@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include "stack.h"
+#include "listnode.h"
 
 template <typename T>
 
