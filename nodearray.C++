@@ -1,10 +1,8 @@
-/*name of this file is "nodearray.h". */
-
+//nodearray.h
 #pragma once
 
-#include "stack.h"
 #include <assert.h>
-#include "listnode.h"
+#include "stack.h"
 
 template <typename T>
 
@@ -19,19 +17,20 @@ class NodeArray: public Stack<T>
   public:
      void push(const T&);
      void pop();
-     virtual bool is_empty();
-     virtual U top()const;
+     virtual bool is_empty()const;
+     virtual T top()const;
      virtual void clear();
-     NodeArray<T>& operator=(const NodeArray&);
-     NodeArray<T> operator+(const NodeArray)const;
+     NodeArray<T>& operator=(const NodeArray<T>&);
+     NodeArray<T> operator+(const NodeArray<T>&)const;
      static int get_c();
   private:
+     static int m_c;
      Listnode<T>* m_top;
 };
 
 template <typename T>
 
-int NodeArray<T>:: int m_c = 0;
+int NodeArray<T>:: m_c = 0;
 
 template <typename T>
 
@@ -64,22 +63,22 @@ template <typename T>
 NodeArray<T>::NodeArray(const NodeArray& obj)
 {
     m_top = nullptr;
-    Listnode <T> node = *obj_m_top;
+    Listnode <T>* node = obj.m_top;
     NodeArray <T> arr();
-    while(node.m_next != nullptr)
+    while(node->m_next != nullptr)
     {
-        arr.push(node);
-        node = *(node.m_next);
+        arr.push(node->m_value);
+        node = node->m_next;
     }
-    arr.push(node);
+    arr.push(node->m_value);
     
-    node = *arr.m_top;
+    node = arr.m_top;
     while(node.m_next != nullptr)
     {
-        this->push(node);
-        node = *(node.m_next);
+        this->push(node->m_value);
+        node = node->m_next;
     }
-    this->push(node);
+    this->push(node->m_value);
 }
 
 template <typename T>
@@ -103,7 +102,7 @@ template <typename T>
 
 void NodeArray<T>:: push(const T& new_mem)
 {
-    m_top = new Listnode(new_mem, m_top);
+    m_top = new Listnode<T> (new_mem, m_top);
 }
 
 template <typename T>
@@ -119,7 +118,7 @@ void NodeArray<T>:: pop()
 
 template <typename T>
 
-T NodeArray<T>:: top()
+T NodeArray<T>:: top()const
 {
     if(!is_empty())
     {
@@ -129,7 +128,7 @@ T NodeArray<T>:: top()
 
 template <typename T>
 
-bool NodeArray<T>:: is_empty()
+bool NodeArray<T>:: is_empty()const
 {
     return m_top == nullptr;
 }
@@ -171,7 +170,7 @@ NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
     }
     obj2.push(cpy->m_value);
     obj.clear();
-    this_.clear();
+    this->clear();
     NodeArray<T>* ptr = &obj2;
     this = ptr;
     return *this;
@@ -179,7 +178,7 @@ NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
 
 template <typename T>
 
-NodeArray<T> NodeArray<T>:: operator+(const NodeArray<T>& obj)
+NodeArray<T> NodeArray<T>:: operator+(const NodeArray<T>& obj)const
 {
     NodeArray<T> sum_obj();
     Listnode<T>* ptr = m_top;
@@ -200,4 +199,3 @@ NodeArray<T> NodeArray<T>:: operator+(const NodeArray<T>& obj)
     
     return sum_obj;
 }
-
