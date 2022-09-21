@@ -7,192 +7,152 @@
 
 template <typename T>
 
-class NodeArray: public Stack<T>
+class NodeArray : public Stack<T>
 {
-  public:
-     NodeArray(const T&);
-     NodeArray();
-     NodeArray(const NodeArray&);
-     NodeArray(NodeArray&&);
-     ~NodeArray();
-  public:
-     void push(const T&);
-     void pop();
-     virtual bool is_empty()const;
-     virtual T top()const;
-     virtual void clear();
-     NodeArray<T>& operator=(const NodeArray<T>&);
-     NodeArray<T> operator+(const NodeArray<T>&)const;
-     static int get_c();
-  private:
-     static int m_c;
-     Listnode<T>* m_top;
+public:
+	NodeArray(const T&);
+	NodeArray();
+	NodeArray(const NodeArray<T>&);
+	NodeArray(const NodeArray<T>&&);
+	virtual ~NodeArray();
+
+public:
+	virtual void push(const T&);
+	virtual void pop();
+	virtual void clear();
+	virtual T top()const;
+	virtual bool empty()const;
+	NodeArray<T>& operator=(const NodeArray&);
+	NodeArray<T> operator+(const NodeArray&)const;
+private:
+	ListNode<T>* m_top;
 };
 
 template <typename T>
 
-int NodeArray<T>:: m_c = 0;
+NodeArray<T>::NodeArray()
+	: m_top(nullptr)
+{}
 
 template <typename T>
 
-int NodeArray<T>:: get_c()
+NodeArray<T>::NodeArray(const T& node)
 {
-    return m_c; // returns the count of created objects;
+	ListNode<T> obj(node);
+	m_top = &obj;
 }
-
-template <typename T>
-
-NodeArray<T>:: NodeArray(const T& num)
-{
-    Listnode <T> node;
-    node.m_value = num;
-    node.m_next = nullptr;
-    m_top = &node;
-    ++m_c;
-}
-
-template <typename T>
-
-NodeArray<T>:: NodeArray()
-    : m_top(nullptr)
-    {
-        ++m_c;
-    }
 
 template <typename T>
 
 NodeArray<T>::NodeArray(const NodeArray& obj)
 {
-    m_top = nullptr;
-    Listnode <T>* node = obj.m_top;
-    NodeArray <T> arr();
-    while(node->m_next != nullptr)
-    {
-        arr.push(node->m_value);
-        node = node->m_next;
-    }
-    arr.push(node->m_value);
-    
-    node = arr.m_top;
-    while(node.m_next != nullptr)
-    {
-        this->push(node->m_value);
-        node = node->m_next;
-    }
-    this->push(node->m_value);
+	NodeArray<T> cpy;
+	ListNode<T>* ptr = obj.m_top;
+	while (ptr != nullptr)
+	{
+		cpy.push(ptr->value);
+		ptr = ptr->next;
+	}
+	ptr = cpy.m_top;
+	while (ptr != nullptr)
+	{
+		this->push(ptr->value);
+		ptr = ptr->next;
+	}
 }
 
 template <typename T>
 
-NodeArray<T>:: NodeArray(NodeArray<T>&& obj)
+NodeArray<T>::NodeArray(const NodeArray&& r_v)
 {
-    /*this is a move ctor for NodeArray.*/
-    m_top = obj.m_top;
-    obj.m_top = nullptr;
+	m_top = r_v.m_top;
+	r_v.m_top = nullptr;
 }
 
 template <typename T>
 
 NodeArray<T>::~NodeArray()
 {
-    --m_c;
-    clear();
+	clear();
+	std::cout << "NodeArray destructor" << std::endl;
 }
 
 template <typename T>
 
-void NodeArray<T>:: push(const T& new_mem)
+void NodeArray<T>::push(const T& node)
 {
-    m_top = new Listnode<T> (new_mem, m_top);
+	ListNode<T>* ptr = new ListNode<T>;
+	ptr -> value = node;
+	ptr->next = m_top;
+	m_top = ptr;
 }
 
 template <typename T>
 
-void NodeArray<T>:: pop()
+void NodeArray<T>::pop()
 {
-    assert(!is_empty());
-    Listnode<T>* ptr = m_top;
-    m_top = m_top->m_next;
-    delete ptr;
-    ptr = nullptr;
+	ListNode<T>* ptr = m_top;
+	m_top = m_top -> next;
+	delete ptr;
 }
 
 template <typename T>
 
-T NodeArray<T>:: top()const
+T NodeArray<T>::top()const
 {
-      return m_top->m_value;
+	return m_top->value;
 }
 
 template <typename T>
 
-bool NodeArray<T>:: is_empty()const
+bool NodeArray<T>::empty()const
 {
-    return m_top == nullptr;
+	return (m_top == nullptr);
 }
 
 template <typename T>
 
-void NodeArray<T>:: clear()
+void NodeArray<T>::clear()
 {
-    while(!is_empty())
-    {
-        pop();
-    }
+	while (!empty())
+	{
+		pop();
+	}
 }
 
 template <typename T>
 
-NodeArray<T>& NodeArray<T>:: operator=(const NodeArray<T>& other)
+NodeArray<T>& NodeArray<T>:: operator=(const NodeArray& obj)
 {
-    if(m_top == other.m_top)
-    {
-        return *this;
-    }
-    Listnode<T>* cpy = other.m_top;
-    NodeArray<T> obj;
-    while(cpy->m_next != nullptr)
-    {
-        obj.push(cpy->m_value);
-        cpy = cpy->m_next;
-    }
-    obj.push(cpy->m_value);
-    
-    NodeArray<T> obj2;
-    cpy = obj.m_top;
-    
-    while(cpy->m_next != nullptr)
-    {
-        obj2.push(cpy->m_value);
-        cpy = cpy->m_next;
-    }
-    obj2.push(cpy->m_value);
-    obj.clear();
-    this->clear();
-    *this = obj2;
-    return *this;
+	ListNode<T>* ptr = obj.m_top;
+	NodeArray<T> rev;
+	while (ptr != nullptr)
+	{
+		rev.push(ptr->value);
+		ptr = ptr->next;
+	}
+	ptr = rev.m_top;
+	while (ptr != nullptr)
+	{
+		this->push(ptr->value);
+		ptr = ptr->next;
+	}
+
+	return *this;
 }
 
 template <typename T>
 
-NodeArray<T> NodeArray<T>:: operator+(const NodeArray<T>& obj)const
+NodeArray<T> NodeArray<T>:: operator+(const NodeArray& obj)const
 {
-    NodeArray<T> sum_obj;
-    Listnode<T>* ptr = m_top;
-    while(ptr->m_next != nullptr)
-    {
-        sum_obj.push(ptr->m_value);
-        ptr = ptr->m_next;
-    }
-    sum_obj.push(ptr->m_value);
-    
-    ptr = obj.m_top;
-    while(ptr->m_next != nullptr)
-    {
-        sum_obj.push(ptr->m_value);
-        ptr = ptr->m_next;
-    }
-    sum_obj.push(ptr->m_value);
-    
-    return sum_obj;
+	NodeArray<T> res, res2;
+	res = obj;
+	res2 = *this; 
+	ListNode<T>* ptr = res2.m_top;
+	while (ptr->next != nullptr)
+	{
+		continue;
+	}
+	ptr->next = res.m_top;
+	return res;
 }
