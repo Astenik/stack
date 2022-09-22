@@ -4,159 +4,168 @@
 
 #include "stack.h"
 
-template <typename U>
+template <typename T>
 
-class Datas : public Stack<U>
+class Datas: public Stack<T>
 {
 public:
     Datas();
-    Datas(int);
-    Datas(Datas&&);
-    ~Datas();
-
+    Datas(const T& = 0, int = 1);
+    Datas(const Datas<T>&);
+    Datas(const Datas<T>&&);
+    virtual ~Datas();
+    
 public:
-    void push(U);
-    void pop();
-    Datas<U>& operator=(const Datas&);
-    Datas<U> operator+(const Datas&)const;
-    U operator[](int);
-    int get_top();
-
+    virtual void push(const T&);
+    virtual void pop();
+    virtual T top()const;
+    virtual bool empty()const;
+    virtual void clear();
+    
+public:
+    Datas<T>& operator=(const Datas<T>&);
+    Datas<T> operator+(const Datas<T>&);
+    int operator[](int);
+    
 private:
+    int  m_top;
+    T* m_arr;
     int m_size;
-    U* m_arr;
-    int m_top;
 };
 
-template <typename U>
+template <typename T>
 
-U Datas<U>:: operator[](int i)
+Datas<T>:: Datas()
+     :m_top(-1)
+     ,m_arr(nullptr)
+     , m_size(0)
+     {}
+
+template <typename T>
+
+Datas<T>::Datas(const T& num, int s)
+     :m_size(s)
 {
-    return m_arr[i];
+    m_arr = new T [m_size];
+    m_arr[0] = num;
+    ++m_top;
 }
 
-template <typename U>
+template <typename T>
 
-int Datas<U>::get_top()
+Datas<T>::Datas(const Datas<T>& obj)
 {
-    return m_top;
-}
-
-template <typename U>
-
-Datas<U>::Datas() :m_size(1), m_top(-1)
-{
-    /*this is default constructor*/
-    m_arr = new U[m_size];
-    assert(m_arr);
-    ++m_count;
-}
-
-template <typename U>
-Datas<U>::Datas(int size) :m_size(size), m_top(-1)
-{
-    /*this is constructor with parametres*/
-    m_arr = new U[m_size];
-    assert(m_arr);
-    ++m_count;
-}
-
-template <typename U>
-
-Datas<U>::Datas(Datas<U>&& obj)
-{
-    /*this is a move ctor.*/
     m_size = obj.m_size;
-    m_top = obj.m_top;
-    m_arr = obj.m_arr;
-    obj.m_arr = nullptr;
-    obj.m_top = 0;
-    obj.m_size = 0;
-}
-
-template <typename U>
-
-Datas<U>:: ~Datas()
-{
-    /*this is destructor*/
-    delete[] m_arr;
-    --m_count;
-}
-
-template <typename U>
-
-void Datas<U>::push(U elem)
-{
-    /*this member function(method) addes a element to the array to the top.*/
-    if (m_top <= m_size - 1)
+    m_arr = new T [m_size];
+    for(int i = 0; i <m_size; ++i)
     {
-        ++m_top;
-        m_arr[m_top] = elem;
-    }
-    else
-    {
-        std::cout << "the array is full." << std::endl;
+        push(obj.m_arr[i]);
     }
 }
 
-template <typename U>
+template <typename T>
 
-void Datas<U>::pop()
+Datas<T>::Datas(const Datas<T>&& tmp)
 {
-    /*this method remove the top elemrny*/
-    if (m_top >= 0)
-    {
-        delete& m_arr[m_top];
-        --m_top;
-    }
-    else
-    {
-        std::cout << "there is no element to remove." << std::endl;
-    }
+    m_arr = tmp.m_arr;
+    m_size = tmp.m_size;
+    m_top = tmp.m_top;
+    tmp.m_arr = nullptr;
+    tmp.m_size = 0;
+    tmp.m_top = 0;
 }
 
-template <typename U>
+template <typename T>
 
-Datas<U>& Datas<U>:: operator=(const Datas<U>& obj)
+Datas<T>::~Datas()
 {
-    /*this is a operator =.*/
-    if (m_size == obj.m_size)
+    delete [] m_arr;
+    std::cout<<"Datas destructor" << std:: endl;
+}
+
+template <typename T>
+
+void Datas<T>::push(const T& num)
+{
+    ++m_top;
+    m_arr[m_top] = num;
+}
+
+template <typename T>
+
+void Datas<T>::pop()
+{
+    T* ptr = this;
+    T* arr = new T[m_size];
+    for(int i = 0; i < m_top; ++i)
     {
-        for (int i = 0; i <= obj.m_top; ++i)
-        {
-            m_arr[i] = obj.m_arr[i];
-        }
+        arr[i] = m_arr[i];
     }
-    else
+    this->m_arr = arr;
+    this->m_top = m_top - 1;
+    delete ptr;
+}
+
+template <typename T>
+
+T Datas<T>::top()const
+{
+    return m_arr[m_top];
+}
+
+template <typename T>
+
+bool Datas<T>:: empty()const
+{
+    return m_top == -1;
+}
+
+template <typename T>
+
+void Datas<T>::clear()
+{
+    delete [] m_arr;
+    m_size = 0;
+    m_top = -1;
+    m_arr = nullptr;
+}
+
+template <typename T>
+
+Datas<T>& Datas<T>:: operator=(const Datas<T>& obj)
+{
+    if(this == &obj)
     {
-        delete[] m_arr;
-        m_arr = new U[obj.m_size];
-        assert(m_arr);
-        m_size = obj.m_size;
-        m_top = obj.m_top;
-        for (int i = 0; i <= m_top; ++i)
-        {
-            m_arr[i] = obj.m_arr[i];
-        }
+        return *this;
+    }
+    m_size = obj.m_size;
+    m_arr = new T [m_size];
+    for(int i = 0; i <m_size; ++i)
+    {
+        push(obj.m_arr[i]);
     }
     return *this;
 }
 
-template <typename U>
+template <typename T>
 
-Datas<U> Datas<U>:: operator+(const Datas<U>& obj)const
+Datas<T> Datas<T>:: operator+(const Datas<T>& obj)
 {
-    Datas<U> res(m_size + obj.m_size);
-    int i;
-    for (i = 0; i <= m_top; ++i)
+    Datas<T> res(0, m_size+obj.m_size);
+    for(int i = 0; i < m_size; ++i)
     {
-        res.m_arr[i] = m_arr[i];
+        res.push(m_arr[i]);
     }
-    for (int j = 0; j <= obj.m_top; ++j)
+    for(int j = 0; j < obj.m_size; ++j)
     {
-        res.m_arr[i] = obj.m_arr[j];
-        ++i;
+        res.push(obj.m_arr[j]);
     }
-    res.m_top = i - 1;
     return res;
+}
+
+template <typename T>
+
+int Datas<T>:: operator=(int i)
+{
+    return m_arr[i];
 }
