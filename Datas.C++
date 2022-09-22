@@ -9,11 +9,10 @@ template <typename T>
 class Datas: public Stack<T>
 {
 public:
-    Datas();
-    Datas(const T& = 0, int = 1);
+    Datas(int);
     Datas(const Datas<T>&);
     Datas(const Datas<T>&&);
-    virtual ~Datas();
+    ~Datas();
     
 public:
     virtual void push(const T&);
@@ -35,20 +34,11 @@ private:
 
 template <typename T>
 
-Datas<T>:: Datas()
-     :m_top(-1)
-     ,m_arr(nullptr)
-     , m_size(0)
-     {}
-
-template <typename T>
-
-Datas<T>::Datas(const T& num, int s)
+Datas<T>::Datas(int s)
      :m_size(s)
 {
     m_arr = new T [m_size];
-    m_arr[0] = num;
-    ++m_top;
+    assert(m_arr);
 }
 
 template <typename T>
@@ -87,30 +77,37 @@ template <typename T>
 
 void Datas<T>::push(const T& num)
 {
-    ++m_top;
-    m_arr[m_top] = num;
+    if(m_top < m_size - 1)
+    {
+        ++m_top;
+        m_arr[m_top] = num;
+    }
+    else
+    {
+        std::cout << "the array is full" <<std:: endl;
+    }
 }
 
 template <typename T>
 
 void Datas<T>::pop()
 {
-    T* ptr = this;
-    T* arr = new T[m_size];
+    Datas<T>* ptr = this;
+    T* arr = new T [m_size];
     for(int i = 0; i < m_top; ++i)
     {
         arr[i] = m_arr[i];
     }
     this->m_arr = arr;
-    this->m_top = m_top - 1;
+    --m_top;
     delete ptr;
 }
 
 template <typename T>
 
-T Datas<T>::top()const
+T Datas<T>:: top()const
 {
-    return m_arr[m_top];
+    return m_top;
 }
 
 template <typename T>
@@ -169,3 +166,4 @@ int Datas<T>:: operator[](int i)
 {
     return m_arr[i];
 }
+
