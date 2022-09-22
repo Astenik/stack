@@ -6,6 +6,20 @@
 
 template <typename T>
 
+class Stack
+{
+public:
+	Stack() {}
+	virtual ~Stack() {}
+	virtual void push(const T&) = 0;
+	virtual void pop() = 0;
+	virtual T top()const = 0;
+	virtual bool empty()const = 0;
+	virtual void clear() = 0;
+};
+
+template <typename T>
+
 class Datas: public Stack<T>
 {
 public:
@@ -24,7 +38,7 @@ public:
 public:
     Datas<T>& operator=(const Datas<T>&);
     Datas<T> operator+(const Datas<T>&);
-    int operator[](int);
+    T operator[](int);
     
 private:
     int  m_top;
@@ -36,6 +50,7 @@ template <typename T>
 
 Datas<T>::Datas(int s)
      :m_size(s)
+     , m_top(0)
 {
     m_arr = new T [m_size];
     assert(m_arr);
@@ -79,8 +94,8 @@ void Datas<T>::push(const T& num)
 {
     if(m_top < m_size - 1)
     {
-        ++m_top;
         m_arr[m_top] = num;
+        ++m_top;
     }
     else
     {
@@ -107,14 +122,14 @@ template <typename T>
 
 T Datas<T>:: top()const
 {
-    return m_top;
+    return m_arr[m_top - 1];
 }
 
 template <typename T>
 
 bool Datas<T>:: empty()const
 {
-    return m_top == -1;
+    return m_top == 0;
 }
 
 template <typename T>
@@ -123,7 +138,7 @@ void Datas<T>::clear()
 {
     delete [] m_arr;
     m_size = 0;
-    m_top = -1;
+    m_top = 0;
     m_arr = nullptr;
 }
 
@@ -162,8 +177,23 @@ Datas<T> Datas<T>:: operator+(const Datas<T>& obj)
 
 template <typename T>
 
-int Datas<T>:: operator[](int i)
+T Datas<T>:: operator[](int i)
 {
+    if(i >= 0 && i < m_top)
+    {
     return m_arr[i];
+    }
 }
 
+int main()
+{
+    Datas <int> obj(5);
+    obj.push(89);
+    std::cout << obj.top() << std::endl;
+    obj.push(34);
+    obj.push(8);
+    obj.pop();
+    std::cout << obj.top() << std::endl;
+    std::cout << obj[1] << std:: endl;
+    return 0;
+}
