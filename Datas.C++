@@ -93,15 +93,8 @@ template <typename T>
 
 void Datas<T>::pop()
 {
-    Datas<T>* ptr = this;
-    T* arr = new T [m_size];
-    for(int i = 0; i < m_top; ++i)
-    {
-        arr[i] = m_arr[i];
-    }
-    this->m_arr = arr;
+    m_arr[m_top] = 0;
     --m_top;
-    delete ptr;
 }
 
 template <typename T>
@@ -169,17 +162,4 @@ T Datas<T>:: operator[](int i)
     {
     return m_arr[i];
     }
-}
-
-int main()
-{
-    Datas <int> obj(5);
-    obj.push(89);
-    std::cout << obj.top() << std::endl;
-    obj.push(34);
-    obj.push(8);
-    obj.pop();
-    std::cout << obj.top() << std::endl;
-    std::cout << obj[1] << std:: endl;
-    return 0;
 }
