@@ -165,7 +165,7 @@ Datas<T> Datas<T>:: operator+(const Datas<T>& obj)
 
 template <typename T>
 
-int Datas<T>:: operator=(int i)
+int Datas<T>:: operator[](int i)
 {
     return m_arr[i];
 }
